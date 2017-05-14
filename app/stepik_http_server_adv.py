@@ -94,15 +94,17 @@ class MyHTTPServerRequestHandler(BaseHTTPRequestHandler):
             if n not in simple_dao_dict:
                 # start searching if do not have value in simple_dao_dict
                 message, success_status = get_theor_steps(n)  # get json with ids of theor steps
+                print('\t message', message, success_status)
                 if success_status:  # if all right add (n, message) to simple_dao
                     simple_dao_dict.update({n: message})
+                    self.wfile.write(bytes(message, "utf8"))  # write output message
+                else:
+                    error_message = f'Process failed with error: {message}'
+                    self.wfile.write(bytes(error_message, "utf8"))  # write output message
             else:
                 # if we already have answer we get it from simple_dao_dict
                 message = simple_dao_dict[n]
                 print('we already have it!')
-
-            self.wfile.write(bytes(message, "utf8"))  # write output message
-
         return
 
 
